@@ -11,7 +11,8 @@ export const loginWithDiscord = async () => {
 
     // Check if a URL was returned.
     if (redirectUrl) {
-        window.location.href = redirectUrl;
+      console.log(redirectUrl);
+      //window.location.href = redirectUrl;
     }
   } catch (error) {
     console.error(error);
