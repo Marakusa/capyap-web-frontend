@@ -27,6 +27,14 @@ export const logoutUser = async () => {
   }
 }
 
+export const getSession = async () => {
+  try {
+    return await account.getSession('current');
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 export const getUser = async () => {
   try {
     return await account.get();

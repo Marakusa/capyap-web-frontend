@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { loginWithDiscord, logoutUser, getUser, authenticateUser } from "./auth";
+import { loginWithDiscord, logoutUser, getUser, authenticateUser, getSession } from "./auth";
 import type { Models } from "appwrite";
 import LoadingDots from "./LoadingDots";
 
@@ -24,6 +24,14 @@ function Auth() {
   useEffect(() => {
     checkUser();
   }, []);
+
+  getSession().then((session) => {
+    if (session) {
+      console.log("Session exists:", session);
+    }
+  }).catch((error) => {
+    console.error("Error checking session:", error);
+  });
 
   // Get query parameters
   const queryParams = new URLSearchParams(window.location.search);
