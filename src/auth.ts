@@ -1,4 +1,4 @@
-import { client, account, OAuthProvider } from "./appwrite";
+import { account } from "./appwrite";
 import config from './local.config.json';
 
 export const loginWithDiscord = async () => {
