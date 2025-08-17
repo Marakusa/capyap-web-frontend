@@ -1,19 +1,9 @@
-import { account, OAuthProvider } from "./appwrite";
+import { account } from "./appwrite";
 import config from './local.config.json';
 
 export const loginWithDiscord = async () => {
   try {
-    const redirectUrl = await account.createOAuth2Session(
-        OAuthProvider.Discord,
-        config.appwrite.redirectUrl,
-        config.appwrite.redirectUrlError
-    );
-
-    // Check if a URL was returned.
-    if (redirectUrl) {
-      console.log(redirectUrl);
-      //window.location.href = redirectUrl;
-    }
+    window.location.href = config.backend.url + "/oauth";
   } catch (error) {
     console.error(error);
   }
