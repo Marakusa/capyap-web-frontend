@@ -75,7 +75,7 @@ function Auth() {
                 <button onClick={() => loginWithDiscord()}>
                   Log In with Discord
                 </button>
-                {error && (
+                {failure && (
                   <p className="text-red-500">
                     Authentication failed: '{error}'. Please try again.
                   </p>
