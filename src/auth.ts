@@ -3,7 +3,7 @@ import config from './local.config.json';
 
 export const loginWithDiscord = async () => {
   try {
-    const redirectUrl = await account.createOAuth2Token(
+    const redirectUrl = await account.createOAuth2Session(
         OAuthProvider.Discord,
         config.appwrite.redirectUrl,
         config.appwrite.redirectUrlError
