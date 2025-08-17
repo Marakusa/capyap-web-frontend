@@ -29,6 +29,8 @@ function Auth() {
   const queryParams = new URLSearchParams(window.location.search);
   const authSecret = queryParams.get("secret");
   const userId = queryParams.get("userId");
+  const failure = queryParams.get("failure");
+  const error = queryParams.get("error");
   if (authSecret && userId) {
     setAuthenticating(true);
     window.history.replaceState({}, document.title, window.location.pathname);
@@ -54,7 +56,7 @@ function Auth() {
   return (
     <>
       <div className="flex justify-center items-center min-h-[70vh]">
-        <div className="card w-9/10 max-w-100 min-h-50 flex flex-col justify-center items-center gap-4">
+        <div className="card w-9/10 max-w-120 min-h-50 flex flex-col justify-center items-center gap-4 p-8">
           {user ? (
             <>
               <p>Welcome, {user.name}!</p>
@@ -73,6 +75,11 @@ function Auth() {
                 <button onClick={() => loginWithDiscord()}>
                   Log In with Discord
                 </button>
+                {error && (
+                  <p className="text-red-500">
+                    Authentication failed: '{error}'. Please try again.
+                  </p>
+                )}
               </>
             )
           )}
