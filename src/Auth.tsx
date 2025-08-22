@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { loginWithDiscord, logoutUser, getUser, authenticateUser, getSession } from "./auth";
+import { loginWithDiscord, logoutUser, getUser, authenticateUser } from "./auth";
 import type { Models } from "appwrite";
 import LoadingDots from "./LoadingDots";
 
@@ -13,7 +13,6 @@ function Auth() {
       if (userData) {
         setUser(userData);
       } else {
-        console.log("No user is logged in.");
         setUser(null);
       }
     } catch (error) {
@@ -25,14 +24,6 @@ function Auth() {
     checkUser();
   }, []);
 
-  getSession().then((session) => {
-    if (session) {
-      console.log("Session exists:", session);
-    }
-  }).catch((error) => {
-    console.error("Error checking session:", error);
-  });
-
   // Get query parameters
   const queryParams = new URLSearchParams(window.location.search);
   const authSecret = queryParams.get("secret");
@@ -43,7 +34,6 @@ function Auth() {
     setAuthenticating(true);
     window.history.replaceState({}, document.title, window.location.pathname);
     authenticateUser(userId, authSecret).then(() => {
-      console.log("User authenticated successfully");
       checkUser().catch((error) => {
         console.error("Failed to fetch user after authentication:", error);
       }).finally(() => {
