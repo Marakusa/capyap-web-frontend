@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>ScreenCapture</h1>
+        <h1>ScreenCapture test</h1>
         <Auth />
       </header>
     </div>
