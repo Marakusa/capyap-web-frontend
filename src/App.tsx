@@ -7,7 +7,7 @@ import AppTheme from '../shared-theme/AppTheme';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import Header from "./Header.tsx";
-import DownloadPage from "./DownloadPage.tsx";
+import MainPage from "./MainPage.tsx";
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import UploadPage from "./UploadPage.tsx";
@@ -78,15 +78,15 @@ function App(props: { disableCustomTheme?: boolean }) {
     {
       path: "/",
       element: <>
-            <Header user={user} loadingUser={loadingUser} logout={logout} isDesktop={isDesktop} />
+            <Header user={user} loadingUser={loadingUser} logout={logout} />
             <Auth user={user} authenticating={authenticating || loadingUser} failure={failure} error={error} />
-            <DownloadPage user={user} isDesktop={isDesktop} />
+            <MainPage user={user} isDesktop={isDesktop} />
           </>,
     },
     {
       path: "/upload",
       element: <>
-            <Header user={user} loadingUser={loadingUser} logout={logout} isDesktop={isDesktop} />
+            <Header user={user} loadingUser={loadingUser} logout={logout} />
             <Auth user={user} authenticating={authenticating || loadingUser} failure={failure} error={error} />
             <UploadPage user={user} />
           </>,
@@ -94,7 +94,7 @@ function App(props: { disableCustomTheme?: boolean }) {
     {
       path: "/gallery",
       element: <>
-            <Header user={user} loadingUser={loadingUser} logout={logout} isDesktop={isDesktop} />
+            <Header user={user} loadingUser={loadingUser} logout={logout} />
             <Auth user={user} authenticating={authenticating || loadingUser} failure={failure} error={error} />
             <GalleryPage user={user} />
           </>,
@@ -102,7 +102,7 @@ function App(props: { disableCustomTheme?: boolean }) {
     {
       path: "/settings",
       element: <>
-            <Header user={user} loadingUser={loadingUser} logout={logout} isDesktop={isDesktop} />
+            <Header user={user} loadingUser={loadingUser} logout={logout} />
             <Auth user={user} authenticating={authenticating || loadingUser} failure={failure} error={error} />
             <Settings user={user} />
           </>,

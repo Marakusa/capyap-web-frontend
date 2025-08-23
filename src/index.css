@@ -111,3 +111,18 @@ button:hover {
   max-width: 600px;
   gap: 8px;
 }
+
+.shortcut {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+}
+.shortcut div {
+  background-color: var(--text-color);
+  color: var(--panel-color);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+.shortcut span {
+  padding: 6px;
+}

@@ -7,7 +7,7 @@ import { Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router";
 
-function Header({user, loadingUser, logout, isDesktop}: {user: Models.User | undefined | null, loadingUser: boolean, logout: () => void, isDesktop: boolean}) {
+function Header({user, loadingUser, logout}: {user: Models.User | undefined | null, loadingUser: boolean, logout: () => void}) {
     let navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -27,11 +27,6 @@ function Header({user, loadingUser, logout, isDesktop}: {user: Models.User | und
                     <LoadingDots size="sm" className="text-gray-500" />
                 ) : (user ? (
                 <>
-                    {!isDesktop && (
-                        <Button variant="text" color="primary" onClick={() => navigate("/")} startIcon={<Download />}>
-                            Download
-                        </Button>
-                    )}
                     <Button variant="contained" color="primary" onClick={() => navigate("/upload")} startIcon={<Upload />}>
                     Upload
                     </Button>
