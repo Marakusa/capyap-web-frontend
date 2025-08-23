@@ -23,12 +23,14 @@ export const authenticateUser = async (userId: string, secret: string) => {
 
 export const fetchUploadKey = async () => {
   try {
-    // Fetch session
-    let jwtKey = await createJWT();
-
     // Fetch upload key from the server
     const formData = new FormData();
-    formData.append("sessionKey", jwtKey);
+
+    const sessionJwt = await createJWT();
+    if (sessionJwt) {
+        formData.append("sessionKey", sessionJwt);
+    }
+    
     const uploadKeyUrl = config.backend.url + "/user/getUploadKey";
     const response = await fetch(uploadKeyUrl, {
         method: "POST",

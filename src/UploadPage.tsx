@@ -6,7 +6,7 @@ import config from './local.config.json';
 import { createJWT, fetchUploadKey } from "./auth";
 import copy from 'copy-to-clipboard';
 import { Button } from "@mui/material";
-import { BrowseGallery, Image, Share } from "@mui/icons-material";
+import { Image, Share } from "@mui/icons-material";
 import CapYapToastContainer, { linkCopiedToast } from "./Toasts";
 import { useNavigate } from "react-router";
 

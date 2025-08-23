@@ -8,7 +8,7 @@ import LoadingDots from "./LoadingDots";
 import Button from "@mui/material/Button";
 import copy from "copy-to-clipboard";
 import { Delete, Share, Warning } from "@mui/icons-material";
-import CapYapToastContainer, { errorToast, linkCopiedToast, successToast } from "./Toasts";
+import CapYapToastContainer, { linkCopiedToast } from "./Toasts";
 import { toast } from "react-toastify";
 
 function GalleryPage({ user }: { user: Models.User | undefined | null }) {
