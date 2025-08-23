@@ -4,6 +4,9 @@ import { setItem, getItem } from "./storage";
 
 export const loginWithDiscord = async () => {
   try {
+    localStorage.removeItem("aw_jwt");
+    localStorage.removeItem("cookieFallback");
+    localStorage.removeItem("uploadKey");
     window.location.href = config.backend.url + "/oauth";
   } catch (error) {
     console.error(error);
@@ -30,7 +33,7 @@ export const fetchUploadKey = async () => {
     if (sessionJwt) {
         formData.append("sessionKey", sessionJwt);
     }
-    
+
     const uploadKeyUrl = config.backend.url + "/user/getUploadKey";
     const response = await fetch(uploadKeyUrl, {
         method: "POST",

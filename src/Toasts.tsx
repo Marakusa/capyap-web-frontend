@@ -1,15 +1,11 @@
 import { toast, ToastContainer, Zoom } from "react-toastify";
 
 export function successToast(msg: string) {
-    toast.success(msg, {
-        className: 'p-0 w-[400px] border border-gray-600/40 bg-gray-800',
-    });
+    toast.success(msg);
 }
 
 export function errorToast(msg: string) {
-    toast.error(msg, {
-        className: 'p-0 w-[400px] border border-gray-600/40 bg-gray-800',
-    });
+    toast.error(msg);
 }
 
 export function linkCopiedToast() {

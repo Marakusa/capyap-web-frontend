@@ -25,22 +25,13 @@
 }
 
 :root {
-  --primary-color: #0b4bc2;
-  --secondary-color: #001e81;
-  --background-color: #fdfdff;
-  --panel-color: #efe9f3;
-  --text-color: #050505;
-  --toastify-color-success: #6fb9f7;
-  --toastify-color-error: #f73d65;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary-color: #0b4bc2;
-    --secondary-color: #001e81;
-    --background-color: #000000;
-    --panel-color: #111111;
-    --text-color: #f5f5f5;
-  }
+  --primary-color: var(--template-palette-primary-main);
+  --secondary-color: var(--template-palette-secondary-main);
+  --background-color: var(--template-palette-background-default);
+  --panel-color: var(--template-palette-background-paper);
+  --text-color: var(--template-palette-text-primary);
+  --toastify-color-success: var(--template-palette-success-light);
+  --toastify-color-error: var(--template-palette-error-light);
 }
 
 body {
@@ -74,6 +65,49 @@ button:hover {
   background-color: var(--secondary-color);
 }
 
-.Toastify__toast {
-  background-color: var(--template-palette-background-default);
+.Toastify__toast, .MuiDialog-paper {
+  background-color: var(--template-palette-background-paper) !important;
+  background-image: none !important;
+  width: 400px;
+  border: solid !important;
+  border-width: 1px !important;
+  border-color: var(--template-palette-divider) !important;
+}
+.MuiDialog-paper {
+  width: unset;
+}
+
+.settingsItem {
+  display: flex;
+  flex-direction: row;
+  color: var(--text-color);
+  align-items: center;
+  gap: calc(var(--spacing) * 4);
+  width: 90%;
+  max-width: 430px;
+}
+.disabled {
+  color: var(--template-palette-text-disabled);
+}
+.settingsItem p {
+  width: 33%;
+  text-align: right;
+}
+.settingsItem .MuiTextField-root {
+  width: 66%;
+}
+
+.dangerZone {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  text-align: start;
+  background-color: rgba(255, 36, 36, 0.349);
+  border: solid 1px var(--template-palette-error-light);
+  border-radius: var(--radius-2xl);
+  padding: 1.5em 2em;
+  color: var(--color-red-300);
+  width: 90%;
+  max-width: 600px;
+  gap: 8px;
 }

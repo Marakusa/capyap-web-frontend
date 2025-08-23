@@ -12,6 +12,7 @@ import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import UploadPage from "./UploadPage.tsx";
 import GalleryPage from "./GalleryPage.tsx";
+import Settings from "./Settings.tsx";
 
 function App(props: { disableCustomTheme?: boolean }) {
   const [user, setUser] = useState<Models.User | undefined | null>(null);
@@ -88,6 +89,14 @@ function App(props: { disableCustomTheme?: boolean }) {
             <Header user={user} loadingUser={loadingUser} logout={logout} />
             <Auth user={user} authenticating={authenticating || loadingUser} failure={failure} error={error} />
             <GalleryPage user={user} />
+          </>,
+    },
+    {
+      path: "/settings",
+      element: <>
+            <Header user={user} loadingUser={loadingUser} logout={logout} />
+            <Auth user={user} authenticating={authenticating || loadingUser} failure={failure} error={error} />
+            <Settings user={user} />
           </>,
     },
   ]);

@@ -9,6 +9,7 @@ import { Button } from "@mui/material";
 import { Image, Share } from "@mui/icons-material";
 import CapYapToastContainer, { linkCopiedToast } from "./Toasts";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
@@ -42,40 +43,45 @@ function UploadPage({ user }: { user: Models.User | undefined | null }) {
             setUploadError(`No file selected for upload.`);
             return;
         }
-        console.log("File to upload:", file);
-        const uploadUrl = `${config.backend.url}/f/upload`;
-        const formData = new FormData();
-        formData.append("file", file instanceof File ? file : file[0]);
-
-        const sessionJwt = await createJWT();
-        if (sessionJwt) {
-            formData.append("sessionKey", sessionJwt);
-        }
-
-        var uploadKey = localStorage.getItem("uploadKey");
-        if (!uploadKey) {
-            uploadKey = await fetchUploadKey();
-        }
         
-        formData.append("uploadKey", uploadKey ?? "");
-        try {
-            const response = await fetch(uploadUrl, {
-                method: "POST",
-                body: formData
-            });
-            if (!response.ok) {
-                const errorMessage = await response.text();
-                throw new Error(`${errorMessage}`);
+        await toast.promise(async () => {
+            const uploadUrl = `${config.backend.url}/f/upload`;
+            const formData = new FormData();
+            formData.append("file", file instanceof File ? file : file[0]);
+
+            const sessionJwt = await createJWT();
+            if (sessionJwt) {
+                formData.append("sessionKey", sessionJwt);
             }
-            const data = await response.json();
-            console.log("Upload successful:", data);
-            setUploadedFileUrl(data.url);
-            setUploadError(null);
-        } catch (error) {
-            console.error(error);
-            setUploadError(`${error instanceof Error ? error.message : "Unknown error"}`);
-        }
-        setFileUploading(false);
+
+            var uploadKey = localStorage.getItem("uploadKey");
+            if (!uploadKey) {
+                uploadKey = await fetchUploadKey();
+            }
+            
+            formData.append("uploadKey", uploadKey ?? "");
+            try {
+                const response = await fetch(uploadUrl, {
+                    method: "POST",
+                    body: formData
+                });
+                if (!response.ok) {
+                    const errorMessage = await response.text();
+                    throw new Error(`${errorMessage}`);
+                }
+                const data = await response.json();
+                setUploadedFileUrl(data.url);
+                setUploadError(null);
+            } catch (error) {
+                console.error(error);
+                setUploadError(`${error instanceof Error ? error.message : "Unknown error"}`);
+            }
+            setFileUploading(false);
+        }, {
+            pending: "Uploading",
+            success: "Upload successful",
+            error: "Upload failed"
+        });
     }
     
     return (
