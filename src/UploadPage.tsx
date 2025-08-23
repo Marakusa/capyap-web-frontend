@@ -3,11 +3,17 @@ import type { Models } from "appwrite";
 import { FileUploader } from "react-drag-drop-files";
 import LoadingDots from "./LoadingDots";
 import config from './local.config.json';
-import { createJWT } from "./auth";
+import { createJWT, fetchUploadKey } from "./auth";
+import copy from 'copy-to-clipboard';
+import { Button } from "@mui/material";
+import { BrowseGallery, Image, Share } from "@mui/icons-material";
+import CapYapToastContainer, { linkCopiedToast } from "./Toasts";
+import { useNavigate } from "react-router";
 
 const fileTypes = ["JPG", "PNG", "GIF"];
 
 function UploadPage({ user }: { user: Models.User | undefined | null }) {
+    let navigate = useNavigate();
     const [fileUploading, setFileUploading] = useState<boolean>(false);
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [uploadedFileUrl, setUploadedFileUrl] = useState<string | null>(null);
@@ -42,9 +48,16 @@ function UploadPage({ user }: { user: Models.User | undefined | null }) {
         formData.append("file", file instanceof File ? file : file[0]);
 
         const sessionJwt = await createJWT();
-        if (sessionJwt?.jwt) {
-            formData.append("sessionKey", sessionJwt.jwt);
+        if (sessionJwt) {
+            formData.append("sessionKey", sessionJwt);
         }
+
+        var uploadKey = localStorage.getItem("uploadKey");
+        if (!uploadKey) {
+            uploadKey = await fetchUploadKey();
+        }
+        
+        formData.append("uploadKey", uploadKey ?? "");
         try {
             const response = await fetch(uploadUrl, {
                 method: "POST",
@@ -82,13 +95,22 @@ function UploadPage({ user }: { user: Models.User | undefined | null }) {
                     {uploadedFileUrl && (
                         <>
                             <p className="p-4">Screenshot uploaded successfully!</p>
-                            <img src={uploadedFileUrl} className="max-h-100 rounded-2xl" />
+                            <img src={uploadedFileUrl} className="rounded-2xl mb-8" style={{maxHeight: "calc(100dvh / 2)"}} />
+                            <div className="flex flex-row gap-4">
+                                <Button variant="contained" color="primary" onClick={() => {copy(uploadedFileUrl);linkCopiedToast();}} startIcon={<Share />}>
+                                    Share
+                                </Button>
+                                <Button variant="outlined" color="secondary" onClick={() => navigate("/gallery")} startIcon={<Image />}>
+                                    View in Gallery
+                                </Button>
+                            </div>
                         </>
                     )}
                 </div>
             ) : (
                 <></>
             )}
+            <CapYapToastContainer />
         </>
     );
 }

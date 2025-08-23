@@ -19,7 +19,7 @@ function Auth({ user, authenticating, failure, error }: {user: Models.User | und
           <div className="flex justify-center items-center min-h-[70vh]">
             <Card className="w-9/10 max-w-120 min-h-50 flex flex-col justify-center items-center p-6">
               <p className="mb-6">
-                Login with Discord to use the ScreenCapture app.
+                Login with Discord to use the CapYap app.
               </p>
               <Button variant="contained" color="primary" onClick={loginWithDiscord} startIcon={<FaDiscord />}>
                 Log In with Discord

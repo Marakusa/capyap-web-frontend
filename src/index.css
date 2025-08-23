@@ -30,6 +30,8 @@
   --background-color: #fdfdff;
   --panel-color: #efe9f3;
   --text-color: #050505;
+  --toastify-color-success: #6fb9f7;
+  --toastify-color-error: #f73d65;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -70,4 +72,8 @@ button {
 
 button:hover {
   background-color: var(--secondary-color);
+}
+
+.Toastify__toast {
+  background-color: var(--template-palette-background-default);
 }

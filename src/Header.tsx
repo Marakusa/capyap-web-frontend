@@ -20,7 +20,7 @@ function Header({user, loadingUser, logout}: {user: Models.User | undefined | nu
 
     return (
         <header className="App-header flex flex-row justify-center items-center gap-6">
-            <h1 className="select-none cursor-pointer" onClick={() => navigate("/")}>ScreenCapture</h1>
+            <h1 className="select-none cursor-pointer" onClick={() => navigate("/")}>CapYap</h1>
             <div className="w-9/10 max-w-128 h-24 flex flex-row justify-end items-center gap-6">
                 {loadingUser ?
                 (
@@ -61,8 +61,8 @@ function Header({user, loadingUser, logout}: {user: Models.User | undefined | nu
                                 <p className="opacity-50">{user.email}</p>
                             </div>
                             <hr className="my-2 w-full border-t-0 border-b-1 border-gray-800"></hr>
-                            <MenuItem onClick={handleClose}>Gallery</MenuItem>
-                            <MenuItem onClick={handleClose}>Settings</MenuItem>
+                            <MenuItem onClick={() => {navigate("/gallery");handleClose();}}>Gallery</MenuItem>
+                            <MenuItem onClick={() => {navigate("/settings");handleClose();}}>Settings</MenuItem>
                             <MenuItem onClick={logout}>Logout</MenuItem>
                         </Menu>
                     </div>
