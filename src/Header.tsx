@@ -2,7 +2,7 @@ import { loginWithDiscord } from "./auth";
 import type { Models } from "appwrite";
 import LoadingDots from "./LoadingDots";
 import Button from '@mui/material/Button';
-import { Download, Login, Person, Upload } from "@mui/icons-material";
+import { Login, Person, Upload } from "@mui/icons-material";
 import { Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router";
