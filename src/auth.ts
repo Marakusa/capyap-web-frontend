@@ -1,4 +1,4 @@
-import { account } from "./appwrite";
+import { account, client } from "./appwrite";
 import config from './local.config.json';
 import { setItem, getItem } from "./storage";
 
@@ -89,6 +89,9 @@ export const createJWT = async () => {
       setItem("aw_jwt", sessionJwt.jwt);
     }
     jwtKey = getItem("aw_jwt");
+    if (jwtKey) {
+      client.setJWT(jwtKey);
+    }
     return jwtKey;
   } catch (error) {
     console.error(error);
