@@ -3,10 +3,10 @@ import { Button } from "@mui/material";
 import Card from "@mui/material/Card";
 import type { Models } from "appwrite";
 
-function DownloadPage({ user }: { user: Models.User | undefined | null }) {
+function DownloadPage({ user, isDesktop }: { user: Models.User | undefined | null, isDesktop: boolean }) {
     return (
         <>
-            {user ? (
+            {user && !isDesktop ? (
                 <div className="flex justify-center items-center min-h-[70vh]">
                     <Card className="w-9/10 max-w-120 min-h-50 flex flex-col justify-center items-center">
                         <h1 className="text-2xl font-bold">Download CapYap</h1>

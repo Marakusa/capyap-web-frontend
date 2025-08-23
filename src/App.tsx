@@ -18,6 +18,14 @@ function App(props: { disableCustomTheme?: boolean }) {
   const [user, setUser] = useState<Models.User | undefined | null>(null);
   const [loadingUser, setLoadingUser] = useState<boolean>(true);
   const [authenticating, setAuthenticating] = useState<boolean>(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const ua = navigator.userAgent.toLowerCase(); // make it case-insensitive
+    if (ua.includes('capyap/')) {
+      setIsDesktop(true);
+    }
+  }, []);
 
   const checkUser = async () => {
     try {
@@ -72,7 +80,7 @@ function App(props: { disableCustomTheme?: boolean }) {
       element: <>
             <Header user={user} loadingUser={loadingUser} logout={logout} />
             <Auth user={user} authenticating={authenticating || loadingUser} failure={failure} error={error} />
-            <DownloadPage user={user} />
+            <DownloadPage user={user} isDesktop={isDesktop} />
           </>,
     },
     {
