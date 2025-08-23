@@ -92,7 +92,6 @@ export const createJWT = async () => {
     if (jwtKey) {
       client.setJWT(jwtKey);
     }
-    console.log("set JWT ", jwtKey);
     return jwtKey;
   } catch (error) {
     console.error(error);
