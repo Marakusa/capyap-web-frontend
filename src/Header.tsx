@@ -2,12 +2,12 @@ import { loginWithDiscord } from "./auth";
 import type { Models } from "appwrite";
 import LoadingDots from "./LoadingDots";
 import Button from '@mui/material/Button';
-import { Login, Person, Upload } from "@mui/icons-material";
+import { Download, Login, Person, Upload } from "@mui/icons-material";
 import { Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router";
 
-function Header({user, loadingUser, logout}: {user: Models.User | undefined | null, loadingUser: boolean, logout: () => void}) {
+function Header({user, loadingUser, logout, isDesktop}: {user: Models.User | undefined | null, loadingUser: boolean, logout: () => void, isDesktop: boolean}) {
     let navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -27,6 +27,11 @@ function Header({user, loadingUser, logout}: {user: Models.User | undefined | nu
                     <LoadingDots size="sm" className="text-gray-500" />
                 ) : (user ? (
                 <>
+                    {!isDesktop && (
+                        <Button variant="text" color="primary" onClick={() => navigate("/")} startIcon={<Download />}>
+                            Download
+                        </Button>
+                    )}
                     <Button variant="contained" color="primary" onClick={() => navigate("/upload")} startIcon={<Upload />}>
                     Upload
                     </Button>
