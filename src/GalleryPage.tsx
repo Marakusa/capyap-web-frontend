@@ -130,7 +130,7 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
                 <>
                     {error && (<p className="text-red-400">{error}</p>)}
                     <div id="view-bg" className="backdrop-blur-3xl fixed top-0 left-0 w-full h-full flex flex-col gap-4 p-8 justify-center items-center" onClick={closeView}>
-                        <img src={capView} className="h-11/12 aspect-auto h-auto" />
+                        <img src={capView} className="aspect-auto h-auto" />
                         <div className="flex flex-row gap-4">
                             <Button variant="contained" color="primary" onClick={() => {copy(capView);linkCopiedToast();}} startIcon={<Share />}>
                                 Share
