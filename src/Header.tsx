@@ -2,7 +2,7 @@ import { loginWithDiscord } from "./auth";
 import type { Models } from "appwrite";
 import LoadingDots from "./LoadingDots";
 import Button from '@mui/material/Button';
-import { Login, Person, Upload } from "@mui/icons-material";
+import { Image, Login, Person } from "@mui/icons-material";
 import { Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router";
@@ -27,8 +27,8 @@ function Header({user, loadingUser, logout}: {user: Models.User | undefined | nu
                     <LoadingDots size="sm" className="text-gray-500" />
                 ) : (user ? (
                 <>
-                    <Button variant="contained" color="primary" onClick={() => navigate("/upload")} startIcon={<Upload />}>
-                    Upload
+                    <Button variant="contained" color="primary" onClick={() => navigate("/gallery")} startIcon={<Image />}>
+                    Gallery
                     </Button>
                     <div>
                         <Button
@@ -61,6 +61,7 @@ function Header({user, loadingUser, logout}: {user: Models.User | undefined | nu
                                 <p className="opacity-50">{user.email}</p>
                             </div>
                             <hr className="my-2 w-full border-t-0 border-b-1 border-gray-800"></hr>
+                            <MenuItem onClick={() => {navigate("/upload");handleClose();}}>Upload</MenuItem>
                             <MenuItem onClick={() => {navigate("/gallery");handleClose();}}>Gallery</MenuItem>
                             <MenuItem onClick={() => {navigate("/settings");handleClose();}}>Settings</MenuItem>
                             <MenuItem onClick={logout}>Logout</MenuItem>

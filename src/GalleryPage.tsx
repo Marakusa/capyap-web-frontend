@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import type { Models } from "appwrite";
 import { GiEmptyWoodBucket } from "react-icons/gi";
@@ -13,13 +13,19 @@ import { toast } from "react-toastify";
 
 function GalleryPage({ user }: { user: Models.User | undefined | null }) {
     const [capView, setCapView] = useState<string | null>(null);
-    const [gallery, setGallery] = useState<string[] | null>(null);
+    const [gallery, setGallery] = useState<string[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [fetching, setFetching] = useState<boolean>(false);
     const [fetched, setFetched] = useState<boolean>(false);
     const [deleteSure, setDeleteSure] = useState<boolean>(false);
-    
+    const [lastFetch, setLastFetch] = useState<string | null>(null);
+
     const readGallery = async () => {
+        if (fetching) {
+            return;
+        }
+        console.log("fetch ", new Date());
+
         setFetching(true);
         const formData = new FormData();
         const sessionJwt = await createJWT();
@@ -27,11 +33,13 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
             formData.append("sessionKey", sessionJwt);
         }
 
-        const galleryReadUrl = config.backend.url + "/f/fetchGallery";
+        const galleryReadUrl = config.backend.url + "/f/fetchGallery" + (lastFetch ? ("?from=" + lastFetch) : "");
         const response = await fetch(galleryReadUrl, {
             method: "POST",
             body: formData
         });
+        setLastFetch(new Date().toISOString());
+
         if (!response.ok) {
             const errorMessage = await response.text();
             console.error(errorMessage);
@@ -39,11 +47,15 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
             setFetching(false);
             return;
         }
-        const data = await response.json();
-        setGallery(data);
+        const data = await response.json() as string[];
+
+        if (data && data.length > 0) {
+            setGallery((prevItems) => [...data, ...prevItems]);
+        }
+
         setFetching(false);
     };
-
+    
     const deleteCap = async (file: string) => {
         if (!gallery) {
             return;
@@ -85,11 +97,18 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
         });
     };
 
-    if (!gallery && !fetching && !fetched) {
-        setFetching(true);
+    if (gallery.length <= 0 && !fetching && !fetched) {
         setFetched(true);
         readGallery();
     }
+
+    let interval: number | undefined;
+    useEffect(() => {
+        if (!interval) {
+            interval = setInterval(readGallery, 10000);
+            return () => clearInterval(interval);
+        }
+    });
 
     function closeView(e: React.MouseEvent<HTMLElement>) {
         if ((e.target as HTMLTextAreaElement).id) {
@@ -103,7 +122,7 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
                 <div className="flex justify-center items-center min-h-[70vh]">
                     <Card className="w-9/10 max-w-200 min-h-70 flex flex-col justify-center items-center">
                         <h1 className="text-2xl font-bold">Your Caps</h1>
-                        {fetching ? (<>
+                        {fetching && gallery.length <= 0 ? (<>
                             <LoadingDots size="sm" className="text-gray-500" />
                         </>) : (<>
                             {!gallery || gallery.length <= 0 ? (
