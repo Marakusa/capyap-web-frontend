@@ -3,7 +3,7 @@ import type { Models } from "appwrite";
 import { FileUploader } from "react-drag-drop-files";
 import LoadingDots from "./LoadingDots";
 import config from './local.config.json';
-import { createJWT, fetchUploadKey } from "./auth";
+import { createJWT } from "./auth";
 import copy from 'copy-to-clipboard';
 import { Button } from "@mui/material";
 import { Image, Share } from "@mui/icons-material";
@@ -54,12 +54,6 @@ function UploadPage({ user }: { user: Models.User | undefined | null }) {
                 formData.append("sessionKey", sessionJwt);
             }
 
-            var uploadKey = localStorage.getItem("uploadKey");
-            if (!uploadKey) {
-                uploadKey = await fetchUploadKey();
-            }
-            
-            formData.append("uploadKey", uploadKey ?? "");
             try {
                 const response = await fetch(uploadUrl, {
                     method: "POST",

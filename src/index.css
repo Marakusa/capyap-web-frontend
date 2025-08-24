@@ -93,7 +93,7 @@ button:hover {
   width: 33%;
   text-align: right;
 }
-.settingsItem .MuiTextField-root {
+.settingsItem .MuiInputBase-root {
   width: 66%;
 }
 

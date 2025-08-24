@@ -3,7 +3,7 @@ import Card from "@mui/material/Card";
 import type { Models } from "appwrite";
 import { GiEmptyWoodBucket } from "react-icons/gi";
 import config from './local.config.json';
-import { createJWT, fetchUploadKey } from "./auth";
+import { createJWT } from "./auth";
 import LoadingDots from "./LoadingDots";
 import Button from "@mui/material/Button";
 import copy from "copy-to-clipboard";
@@ -26,13 +26,6 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
         if (sessionJwt) {
             formData.append("sessionKey", sessionJwt);
         }
-
-        var uploadKey = localStorage.getItem("uploadKey");
-        if (!uploadKey) {
-            uploadKey = await fetchUploadKey();
-        }
-        
-        formData.append("uploadKey", uploadKey ?? "");
 
         const galleryReadUrl = config.backend.url + "/f/fetchGallery";
         const response = await fetch(galleryReadUrl, {
@@ -64,13 +57,6 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
             if (sessionJwt) {
                 formData.append("sessionKey", sessionJwt);
             }
-
-            var uploadKey = localStorage.getItem("uploadKey");
-            if (!uploadKey) {
-                uploadKey = await fetchUploadKey();
-            }
-            
-            formData.append("uploadKey", uploadKey ?? "");
 
             const parsedUrl = new URL(file);
             // Remove leading "/f/" from pathname

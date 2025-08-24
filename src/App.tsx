@@ -7,7 +7,7 @@ import AppTheme from '../shared-theme/AppTheme';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
 import Header from "./Header.tsx";
-import MainPage from "./MainPage.tsx";
+import MainPage from "./MainPage";
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import UploadPage from "./UploadPage.tsx";

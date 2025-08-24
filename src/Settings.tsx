@@ -1,16 +1,19 @@
 import Card from "@mui/material/Card";
 import type { Models } from "appwrite";
 import CapYapToastContainer from "./Toasts";
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputAdornment, OutlinedInput } from "@mui/material";
 import { Cancel, Delete } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import config from './local.config.json';
-import { createJWT } from "./auth";
+import { createJWT, fetchUploadKey } from "./auth";
 import { toast } from "react-toastify";
+import { FaCopy } from "react-icons/fa";
+import copy from "copy-to-clipboard";
 
 function Settings({ user }: { user: Models.User | undefined | null }) {
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [uploadKey, setUploadKey] = useState<string | null>(null);
 
     const handleClickOpenDeleteConfirm = () => {
         setOpenDeleteConfirm(true);
@@ -59,6 +62,12 @@ function Settings({ user }: { user: Models.User | undefined | null }) {
         }
     };
 
+    useEffect(() => {
+        fetchUploadKey().then((key) => {
+            setUploadKey(key);
+        });
+    }, [uploadKey]);
+
     return (
         <>
             {user ? (
@@ -67,13 +76,30 @@ function Settings({ user }: { user: Models.User | undefined | null }) {
                         <h1 className="text-2xl font-bold">Settings</h1>
                         <div className="settingsItem disabled">
                             <p>Username:</p>
-                            <TextField id="outlined-basic" variant="outlined" disabled value={user.name} />
+                            <OutlinedInput id="outlined-basic" disabled value={user.name} />
                         </div>
                         <div className="settingsItem disabled">
                             <p>Email address:</p>
-                            <TextField id="outlined-basic" variant="outlined" disabled value={user.email} />
+                            <OutlinedInput id="outlined-basic" disabled value={user.email} />
                         </div>
                         <i className="opacity-40">These values come from your Discord account.</i>
+                        <div className="settingsItem disabled">
+                            <p>Upload address:</p>
+                            <OutlinedInput id="outlined-basic" disabled value={uploadKey ? `${config.backend.url}/f/u?k=${uploadKey}` : "Please wait..."} 
+                                onClick={() => {copy(`${config.backend.url}/f/u?k=${uploadKey}`)}}
+                                endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                    aria-label="Copy URL"
+                                    onClick={() => {}}
+                                    edge="end"
+                                    style={{marginRight: "-10px"}}
+                                    >
+                                        <FaCopy />
+                                    </IconButton>
+                                </InputAdornment>
+                            } />
+                        </div>
                         <div className="dangerZone">
                             <h1>Danger Zone</h1>
                             <p>The actions listed below are permanent and cannot be reversed. If you delete your account, <strong>ALL</strong> your files and data will be <strong>REMOVED</strong>.</p>
