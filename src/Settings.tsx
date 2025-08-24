@@ -85,8 +85,8 @@ function Settings({ user }: { user: Models.User | undefined | null }) {
                         <i className="opacity-40">These values come from your Discord account.</i>
                         <div className="settingsItem disabled">
                             <p>Upload address:</p>
-                            <OutlinedInput id="outlined-basic" disabled value={uploadKey ? `${config.backend.url}/f/u?k=${uploadKey}` : "Please wait..."} 
-                                onClick={() => {copy(`${config.backend.url}/f/u?k=${uploadKey}`)}}
+                            <OutlinedInput id="outlined-basic" disabled value={uploadKey ? `${config.backend.url}/f/u?k=${encodeURIComponent(uploadKey ?? "")}` : "Please wait..."} 
+                                onClick={() => {copy(`${config.backend.url}/f/u?k=${encodeURIComponent(uploadKey ?? "")}`)}}
                                 endAdornment={
                                 <InputAdornment position="end">
                                     <IconButton
