@@ -120,7 +120,7 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
             })
             .then(buffer => {
                 const blob = new Blob([buffer]);
-                const blobUrl = window.URL.createObjectURL(blob);
+                const blobUrl = window.URL.createObjectURL(blob).replace('http://', 'https://');
                 const link = document.createElement('a');
                 link.href = blobUrl;
                 link.download = filename;
