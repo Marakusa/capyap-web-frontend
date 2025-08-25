@@ -1,7 +1,7 @@
 import "./App.css";
 import Auth from './Auth.tsx';
 import { useEffect, useState } from "react";
-import { logoutUser, getUser, authenticateUser } from "./auth";
+import { logoutUser, getUser, authenticateUser, createJWT } from "./auth";
 import type { Models } from "appwrite";
 import AppTheme from '../shared-theme/AppTheme';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -13,6 +13,7 @@ import { RouterProvider } from "react-router/dom";
 import UploadPage from "./UploadPage.tsx";
 import GalleryPage from "./GalleryPage.tsx";
 import Settings from "./Settings.tsx";
+import { socket } from "./socket.ts";
 
 function App(props: { disableCustomTheme?: boolean }) {
   const [user, setUser] = useState<Models.User | undefined | null>(null);
@@ -20,6 +21,19 @@ function App(props: { disableCustomTheme?: boolean }) {
   const [authenticating, setAuthenticating] = useState<boolean>(false);
   const [isDesktop, setIsDesktop] = useState(false);
 
+  useEffect(() => {
+    async function onConnect() {
+      const jwtToken = await createJWT();
+      socket.timeout(5000).emit('userLogin', jwtToken);
+    }
+
+    socket.on('connect', onConnect);
+
+    return () => {
+      socket.off('connect', onConnect);
+    };
+  }, []);
+    
   useEffect(() => {
     const ua = navigator.userAgent.toLowerCase(); // make it case-insensitive
     if (ua.includes('capyap/')) {

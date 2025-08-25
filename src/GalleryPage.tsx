@@ -10,6 +10,7 @@ import copy from "copy-to-clipboard";
 import { Delete, Share, Warning } from "@mui/icons-material";
 import CapYapToastContainer, { linkCopiedToast } from "./Toasts";
 import { toast } from "react-toastify";
+import { socket } from "./socket.ts";
 
 function GalleryPage({ user }: { user: Models.User | undefined | null }) {
     const [capView, setCapView] = useState<string | null>(null);
@@ -24,7 +25,6 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
         if (fetching) {
             return;
         }
-        console.log("fetch ", new Date());
 
         setFetching(true);
         const formData = new FormData();
@@ -102,20 +102,24 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
         readGallery();
     }
 
-    let interval: number | undefined;
-    useEffect(() => {
-        if (!interval) {
-            interval = setInterval(readGallery, 10000);
-            return () => clearInterval(interval);
-        }
-    });
-
     function closeView(e: React.MouseEvent<HTMLElement>) {
         if ((e.target as HTMLTextAreaElement).id) {
             setCapView(null);
         }
     }
 
+    useEffect(() => {
+        async function onAddImageEvent() {
+            await readGallery();
+        }
+
+        socket.on('addImage', onAddImageEvent);
+
+        return () => {
+            socket.off('addImage', onAddImageEvent);
+        };
+    }, [readGallery]);
+    
     return (
         <>
             {user ? (
