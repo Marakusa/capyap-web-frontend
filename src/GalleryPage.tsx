@@ -109,24 +109,31 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
     }
 
     function download(url: string) {
-        const filename = url.split('/').pop()?.split('?')[0];
+        const filename = url.split('/').pop()?.split('?')[0] || 'image.jpg';
         fetch(url, {
-            method: "GET",
-            headers: {}
+            method: 'GET',
+            headers: {},
         })
-        .then(response => {
-            response.arrayBuffer().then(function(buffer) {
-                const url = window.URL.createObjectURL(new Blob([buffer]));
-                const link = document.createElement("a");
-                link.href = url;
-                link.setAttribute("download", filename ?? "image.jpg");
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.arrayBuffer();
+            })
+            .then(buffer => {
+                const blob = new Blob([buffer]);
+                const blobUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename;
                 document.body.appendChild(link);
                 link.click();
+                // Cleanup
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(blobUrl);
+            })
+            .catch(err => {
+                console.error('Download error:', err);
+                alert('Failed to download the image. Check the console for details.');
             });
-        })
-        .catch(err => {
-            console.log(err);
-        });
     }
 
     useEffect(() => {
