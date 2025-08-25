@@ -7,7 +7,7 @@ import { createJWT } from "./auth";
 import LoadingDots from "./LoadingDots";
 import Button from "@mui/material/Button";
 import copy from "copy-to-clipboard";
-import { Delete, Share, Warning } from "@mui/icons-material";
+import { Delete, Download, Share, Warning } from "@mui/icons-material";
 import CapYapToastContainer, { linkCopiedToast } from "./Toasts";
 import { toast } from "react-toastify";
 import { socket } from "./socket.ts";
@@ -108,6 +108,27 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
         }
     }
 
+    function download(url: string) {
+        const filename = url.split('/').pop()?.split('?')[0];
+        fetch(url, {
+            method: "GET",
+            headers: {}
+        })
+        .then(response => {
+            response.arrayBuffer().then(function(buffer) {
+                const url = window.URL.createObjectURL(new Blob([buffer]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", filename ?? "image.jpg");
+                document.body.appendChild(link);
+                link.click();
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    }
+
     useEffect(() => {
         async function onAddImageEvent() {
             await readGallery();
@@ -155,6 +176,9 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
                     <div id="view-bg" className="backdrop-blur-3xl fixed top-0 left-0 w-full h-full flex flex-col gap-4 p-8 justify-center items-center" onClick={closeView}>
                         <img src={capView} className="max-h-[90%] max-w-[90%] object-contain" />
                         <div className="flex flex-row gap-4">
+                            <Button variant="contained" color="primary" onClick={() => {download(capView);}} startIcon={<Download />}>
+                                Download
+                            </Button>
                             <Button variant="contained" color="primary" onClick={() => {copy(capView);linkCopiedToast();}} startIcon={<Share />}>
                                 Share
                             </Button>
