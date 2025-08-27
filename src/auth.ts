@@ -81,12 +81,17 @@ export const createJWT = async () => {
   try {
     let jwtKey = getItem("aw_jwt");
     if (!jwtKey) {
+      // idk why but the createJWT dont work without refreshing the page PART 1
+      client.setJWT("");
+
       const sessionJwt = await account.createJWT();
       if (!sessionJwt?.jwt) {
         await account.deleteSession('current');
         throw new Error("Failed to fetch session");
       }
       setItem("aw_jwt", sessionJwt.jwt);
+      client.setJWT(sessionJwt.jwt);
+      return sessionJwt.jwt;
     }
     jwtKey = getItem("aw_jwt");
     if (jwtKey) {
@@ -95,5 +100,15 @@ export const createJWT = async () => {
     return jwtKey;
   } catch (error) {
     console.error(error);
+
+    // PART 2, and it still throws an error but a second time works
+    const sessionJwt = await account.createJWT();
+    if (!sessionJwt?.jwt) {
+      await account.deleteSession('current');
+      throw new Error("Failed to fetch session");
+    }
+    setItem("aw_jwt", sessionJwt.jwt);
+    client.setJWT(sessionJwt.jwt);
+    return sessionJwt.jwt;
   }
 }

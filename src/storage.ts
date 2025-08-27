@@ -16,8 +16,8 @@ export function getItem(key: string): string | null {
     try {
         const item = JSON.parse(itemStr) as { value: string; expiry: number };
         if (Date.now() > item.expiry) {
-        localStorage.removeItem(key);
-        return null;
+            localStorage.removeItem(key);
+            return null;
         }
         return item.value;
     } catch {
