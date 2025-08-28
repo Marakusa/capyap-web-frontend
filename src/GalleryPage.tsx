@@ -234,7 +234,7 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
                             ) : (
                                 <div className="flex flex-wrap justify-center gap-4">
                                     {galleryPictures.map((source) => <div 
-                                        style={{backgroundImage: `url(${source})`}} 
+                                        style={{backgroundImage: `url(${source + "&noView"})`}} 
                                         className="bg-cover bg-center rounded-lg cursor-pointer hover:scale-102 transition-transform w-48 h-48"
                                         onClick={() => {setCapView(source); setDeleteSure(false);}}></div>)}
                                 </div>
@@ -251,7 +251,7 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
                 <>
                     {error && (<p className="text-red-400">{error}</p>)}
                     <div id="view-bg" className="backdrop-blur-3xl fixed top-0 left-0 w-full h-full flex flex-col gap-4 p-8 justify-center items-center" onClick={closeView}>
-                        <img src={capView} className="max-h-[90%] max-w-[90%] object-contain" />
+                        <img src={capView + "&noView"} className="max-h-[90%] max-w-[90%] object-contain" />
                         <div className="flex flex-row gap-4">
                             <Button variant="contained" color="primary" onClick={() => {download(capView);}} startIcon={<Download />}>
                                 Download
