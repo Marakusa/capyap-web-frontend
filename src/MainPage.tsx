@@ -20,7 +20,7 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
     const [totalSpaceUsed, setTotalSpaceUsed] = useState<string>("0 KB");
     const [totalFiles, setTotalFiles] = useState<number>(0);
     const [fetching, setFetching] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+    //const [error, setError] = useState<string | null>(null);
 
     async function fetchStats() {
         if (fetching) {
@@ -43,7 +43,7 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
         if (!response.ok) {
             const errorMessage = await response.text();
             console.error(errorMessage);
-            setError(errorMessage);
+            //setError(errorMessage);
             setFetching(false);
             setTotalViews(0);
             setFiles7Days(0);
@@ -54,6 +54,8 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
         const data = await response.json() as Stats;
 
         setFetching(false);
+
+        //setError(null);
 
         if (data) {
             setTotalViews(data.views);
