@@ -20,6 +20,8 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
     const [totalSpaceUsed, setTotalSpaceUsed] = useState<string>("0 KB");
     const [totalFiles, setTotalFiles] = useState<number>(0);
     const [fetching, setFetching] = useState<boolean>(false);
+    const [downloadLoading, setDownloadLoading] = useState<boolean>(false);
+    const [downloadError, setDownloadError] = useState<string | null>(null);
     //const [error, setError] = useState<string | null>(null);
 
     async function fetchStats() {
@@ -65,6 +67,42 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
         }
     }
 
+    function downloadInstaller(){
+        setDownloadLoading(true);
+        setDownloadError(null);
+        try {
+            fetch("https://api.github.com/repos/Marakusa/capyap/releases/latest").then((res) => {
+                res.json().then((data) => {
+                    if (res.status > 299) {
+                        console.error(data.message);
+                        setDownloadLoading(false);
+                        setDownloadError(data.message);
+                        return;
+                    }
+
+                    let downloadUrl: string | null = null;
+                    if (data.assets.length > 0) {
+                        downloadUrl = data.assets[0].browser_download_url;
+                    }
+                    if (downloadUrl === null) {
+                        setDownloadLoading(false);
+                        return;
+                    }
+                    setDownloadLoading(false);
+                    window.location.href = downloadUrl;
+                });
+            }).catch((error) => {
+                console.error(error);
+                setDownloadLoading(false);
+                setDownloadError(error);
+            });
+        } catch (ex) {
+            console.error(ex);
+            setDownloadLoading(false);
+            setDownloadError("Download failed, please try again.");
+        }
+    }
+
     useEffect(() => {
         fetchStats();
     }, []);
@@ -77,9 +115,16 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
                         <div className="flex justify-center items-center min-h-[60vh]">
                             <Card className="w-9/10 max-w-120 min-h-50 flex flex-col justify-center items-center">
                                 <h1 className="text-2xl font-bold">Download CapYap</h1>
-                                <Button variant="contained" color="primary" href="/download" className="mb-4" startIcon={<Download />}>
-                                    Download Now
-                                </Button>
+                                {downloadLoading ? (
+                                    <Button variant="contained" color="primary" className="mb-4" startIcon={<LoadingDots size="xs" />}>
+                                        Please wait...
+                                    </Button>
+                                ) : (
+                                    <Button variant="contained" color="primary" onClick={downloadInstaller} className="mb-4" startIcon={<Download />}>
+                                        Download Now
+                                    </Button>
+                                )}
+                                {downloadError && (<p className="text-red-400">{downloadError}</p>)}
                                 <p className="text-gray-600">
                                     Thank you for using CapYap! Click the button above to download the latest version of the app.
                                 </p>
