@@ -84,7 +84,7 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
 
             const parsedUrl = new URL(file);
             // Remove leading "/f/" from pathname
-            const parsedFilename = parsedUrl.pathname.replace(/^\/f\//, '');
+            const parsedFilename = parsedUrl.pathname.split('/').pop() || "";
             formData.append("file", parsedFilename);
 
             const galleryReadUrl = config.backend.url + "/f/delete";
