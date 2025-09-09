@@ -124,9 +124,19 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
 
     function download(url: string) {
         const filename = url.split('/').pop()?.split('?')[0] || 'image.jpg';
-        fetch(url, {
+
+        // Extract the 'c' query parameter (the encryption key)
+        const urlObj = new URL(url);
+        const key = urlObj.searchParams.get('c'); // get the key from ?c=
+
+        // Remove query parameters from the URL
+        urlObj.search = '';
+
+        fetch(urlObj.toString(), {
             method: 'GET',
-            headers: {},
+            headers: {
+                'X-File-Key': key || '' // send the key in the custom header
+            },
         })
             .then(response => {
                 if (!response.ok) throw new Error('Network response was not ok');
