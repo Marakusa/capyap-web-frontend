@@ -7,7 +7,7 @@ import { createJWT } from "./auth";
 import LoadingDots from "./LoadingDots";
 import Button from "@mui/material/Button";
 import copy from "copy-to-clipboard";
-import { Delete, Download, Share, Warning } from "@mui/icons-material";
+import { Close, Delete, Download, Share, Warning } from "@mui/icons-material";
 import CapYapToastContainer, { linkCopiedToast } from "./Toasts";
 import { toast } from "react-toastify";
 import { socket } from "./socket.ts";
@@ -123,10 +123,8 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
         readGallery(1);
     }
 
-    function closeView(e: React.MouseEvent<HTMLElement>) {
-        if ((e.target as HTMLTextAreaElement).id) {
-            setCapView(null);
-        }
+    function closeView() {
+        setCapView(null);
     }
 
     function download(url: string) {
@@ -308,9 +306,10 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
             {capView && (
                 <>
                     {error && (<p className="text-red-400">{error}</p>)}
-                    <div id="view-bg" className="backdrop-blur-3xl fixed top-0 left-0 w-full h-full flex flex-col gap-4 p-8 justify-center items-center overflow-y-scroll md:overflow-y-hidden" onClick={closeView}>
-                        <div className="flex flex-col md:flex-row gap-8">
-                            <div className="flex flex-col gap-4 justify-center items-center">
+                    <div id="view-bg" className="backdrop-blur-3xl fixed top-0 left-0 w-full h-full flex flex-col gap-4 p-8 justify-center items-center overflow-y-scroll md:overflow-y-hidden">
+                        <div className="flex flex-col lg:flex-row gap-8 lg:h-fit lg:w-fit items-center justify-center">
+                            <div className="flex-0 absolute w-full h-full z-9" onClick={() => closeView()}></div>
+                            <div className="flex flex-col gap-4 justify-center items-center h-1/2 lg:h-full z-10">
                                 <img src={capView + "&noView=1"} className="max-h-[90%] max-w-[90%] object-contain" />
                                 <div className="flex flex-row gap-4">
                                     <Button variant="contained" color="primary" onClick={() => {download(capView);}} startIcon={<Download />}>
@@ -330,12 +329,25 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
                                     )}
                                 </div>
                             </div>
-                            <Card className="flex flex-col gap-4 md:w-90">
-                                <h2 className="p-3 pb-0 w-full text-left text-nowrap overflow-clip overflow-ellipsis" title={new URL(capView).pathname.split('/').pop()}>{new URL(capView).pathname.split('/').pop()}</h2>
-                                {fetchingImageStats ? (<LoadingDots size="sm" className="text-gray-500 px-3" />) : imageStats == null ? (<p className="px-3 py-0 w-full text-left opacity-75">No stats available</p>) : (
+                            <Card className="flex flex-col w-full md:w-120 z-10">
+                                <div className="p-3 pb-0 flex flex-row items-center justify-between w-full">
+                                    <h2
+                                        className="flex-1 truncate text-left text-base font-medium"
+                                        title={new URL(capView).pathname.split('/').pop()}
+                                    >
+                                        {new URL(capView).pathname.split('/').pop()}
+                                    </h2>
+                                    <div
+                                        onClick={() => closeView()}
+                                        className="ml-3 shrink-0 hover:bg-white/10 rounded-md p-2 cursor-pointer"
+                                    >
+                                        <Close />
+                                    </div>
+                                </div>
+                                {fetchingImageStats ? (<LoadingDots size="sm" className="text-gray-500 p-3" />) : imageStats == null ? (<p className="px-3 py-0 w-full text-left opacity-75">No stats available</p>) : (
                                     <>
                                         <p className="px-3 py-0 w-full text-left opacity-75" title={new Date(imageStats?.uploadedAt ?? "0").toLocaleString()}>{new Date(imageStats?.uploadedAt ?? "0").toDateString()}</p>
-                                        <div className="flex flex-col sm:flex-row justify-between items-stretch">
+                                        <div className="flex flex-row justify-between items-stretch">
                                             <div className="grid grid-rows-2 text-left h-24 p-4 text-nowrap overflow-hidden w-full">
                                                 <h3>Views</h3>
                                                 <h1 className="content-end">{imageStats?.views}</h1>
