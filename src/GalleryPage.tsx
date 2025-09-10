@@ -19,6 +19,11 @@ interface Gallery {
     totalPages: number,
     documents: string[]
 }
+interface ImageStats {
+    views: number,
+    size: string,
+    uploadedAt: string
+}
 
 function GalleryPage({ user }: { user: Models.User | undefined | null }) {
     const [capView, setCapView] = useState<string | null>(null);
@@ -29,6 +34,8 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
     const [error, setError] = useState<string | null>(null);
     const [fetching, setFetching] = useState<boolean>(false);
     const [fetched, setFetched] = useState<boolean>(false);
+    const [fetchingImageStats, setFetchingImageStats] = useState<boolean>(false);
+    const [imageStats, setImageStats] = useState<ImageStats | null>(null);
     const [deleteSure, setDeleteSure] = useState<boolean>(false);
 
     const readGallery = async (page: number) => {
@@ -209,6 +216,43 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
         return (output);
     }
 
+    async function fetchStats(file: string) {
+        setFetchingImageStats(true);
+        setImageStats(null);
+        const formData = new FormData();
+        const sessionJwt = await createJWT();
+        if (sessionJwt) {
+            formData.append("sessionKey", sessionJwt);
+        }
+
+        formData.append("file", file);
+        
+        const statsReadUrl = config.backend.url + "/f/stats";
+        const response = await fetch(statsReadUrl, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            console.error(errorMessage);
+            toast.error("Failed to fetch image stats: " + errorMessage);
+            setFetchingImageStats(false);
+            setImageStats(null);
+            return;
+        }
+        const data = await response.json() as ImageStats;
+
+        setFetchingImageStats(false);
+
+        if (!data) {
+            setImageStats(null);
+            return;
+        }
+
+        setImageStats(data);
+    }
+
     const PrevButton = () => { return (<Button variant="outlined" color="primary" onClick={() => { setPage(currentPage - 1); }}>&lt;</Button>); }
     const NextButton = () => { return (<Button variant="outlined" color="primary" onClick={() => { setPage(currentPage + 1); }}>&gt;</Button>); }
     const MiddleDots = () => { return (<p className="mt-4 mx-2">...</p>); }
@@ -246,7 +290,11 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
                                     {galleryPictures.map((source) => <div 
                                         style={{backgroundImage: `url(${source + "&noView=1"})`}} 
                                         className="bg-cover bg-center rounded-lg cursor-pointer hover:scale-102 transition-transform w-48 h-48"
-                                        onClick={() => {setCapView(source); setDeleteSure(false);}}></div>)}
+                                        onClick={async () => {
+                                            setCapView(source);
+                                            setDeleteSure(false);
+                                            await fetchStats(new URL(source).pathname.split("/f/").pop() || "");
+                                        }}></div>)}
                                 </div>
                             )}
                         
@@ -260,24 +308,42 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
             {capView && (
                 <>
                     {error && (<p className="text-red-400">{error}</p>)}
-                    <div id="view-bg" className="backdrop-blur-3xl fixed top-0 left-0 w-full h-full flex flex-col gap-4 p-8 justify-center items-center" onClick={closeView}>
-                        <img src={capView + "&noView=1"} className="max-h-[90%] max-w-[90%] object-contain" />
-                        <div className="flex flex-row gap-4">
-                            <Button variant="contained" color="primary" onClick={() => {download(capView);}} startIcon={<Download />}>
-                                Download
-                            </Button>
-                            <Button variant="contained" color="primary" onClick={() => {copy(capView);linkCopiedToast();}} startIcon={<Share />}>
-                                Share
-                            </Button>
-                            {!deleteSure ? (
-                                <Button variant="outlined" color="secondary" onClick={() => setDeleteSure(true)} startIcon={<Delete />}>
-                                    Delete
-                                </Button>
-                            ) : (
-                                <Button variant="contained" color="secondary" onClick={() => deleteCap(capView)} startIcon={<Warning />}>
-                                    Are you sure?
-                                </Button>
-                            )}
+                    <div id="view-bg" className="backdrop-blur-3xl fixed top-0 left-0 w-full h-full flex flex-col gap-4 p-8 justify-center items-center overflow-y-scroll md:overflow-y-hidden" onClick={closeView}>
+                        <div className="flex flex-col md:flex-row gap-8">
+                            <div className="flex flex-col gap-4 justify-center items-center">
+                                <img src={capView + "&noView=1"} className="max-h-[90%] max-w-[90%] object-contain" />
+                                <div className="flex flex-row gap-4">
+                                    <Button variant="contained" color="primary" onClick={() => {download(capView);}} startIcon={<Download />}>
+                                        Download
+                                    </Button>
+                                    <Button variant="contained" color="primary" onClick={() => {copy(capView);linkCopiedToast();}} startIcon={<Share />}>
+                                        Share
+                                    </Button>
+                                    {!deleteSure ? (
+                                        <Button variant="outlined" color="secondary" onClick={() => setDeleteSure(true)} startIcon={<Delete />}>
+                                            Delete
+                                        </Button>
+                                    ) : (
+                                        <Button variant="contained" color="secondary" onClick={() => deleteCap(capView)} startIcon={<Warning />}>
+                                            Are you sure?
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+                            <Card className="flex flex-col gap-4 md:w-90">
+                                <h2 className="p-3 pb-0 w-full text-left text-nowrap overflow-clip overflow-ellipsis" title={new URL(capView).pathname.split('/').pop()}>{new URL(capView).pathname.split('/').pop()}</h2>
+                                <p className="px-3 py-0 w-full text-left opacity-75" title={new Date(imageStats?.uploadedAt ?? "0").toLocaleString()}>{new Date(imageStats?.uploadedAt ?? "0").toDateString()}</p>
+                                <div className="flex flex-col sm:flex-row justify-between items-stretch">
+                                    <div className="grid grid-rows-2 text-left h-24 p-4 text-nowrap overflow-hidden w-full">
+                                        <h3>Views</h3>
+                                        <h1 className="content-end">{imageStats?.views}</h1>
+                                    </div>
+                                    <div className="grid grid-rows-2 text-left h-24 p-4 text-nowrap overflow-hidden w-full">
+                                        <h3>Size</h3>
+                                        <h1 className="content-end">{imageStats?.size}</h1>
+                                    </div>
+                                </div>
+                            </Card>
                         </div>
                     </div>
                 </>
