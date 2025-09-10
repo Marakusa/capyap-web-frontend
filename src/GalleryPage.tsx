@@ -332,17 +332,21 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
                             </div>
                             <Card className="flex flex-col gap-4 md:w-90">
                                 <h2 className="p-3 pb-0 w-full text-left text-nowrap overflow-clip overflow-ellipsis" title={new URL(capView).pathname.split('/').pop()}>{new URL(capView).pathname.split('/').pop()}</h2>
-                                <p className="px-3 py-0 w-full text-left opacity-75" title={new Date(imageStats?.uploadedAt ?? "0").toLocaleString()}>{new Date(imageStats?.uploadedAt ?? "0").toDateString()}</p>
-                                <div className="flex flex-col sm:flex-row justify-between items-stretch">
-                                    <div className="grid grid-rows-2 text-left h-24 p-4 text-nowrap overflow-hidden w-full">
-                                        <h3>Views</h3>
-                                        <h1 className="content-end">{imageStats?.views}</h1>
-                                    </div>
-                                    <div className="grid grid-rows-2 text-left h-24 p-4 text-nowrap overflow-hidden w-full">
-                                        <h3>Size</h3>
-                                        <h1 className="content-end">{imageStats?.size}</h1>
-                                    </div>
-                                </div>
+                                {fetchingImageStats ? (<LoadingDots size="sm" className="text-gray-500 px-3" />) : imageStats == null ? (<p className="px-3 py-0 w-full text-left opacity-75">No stats available</p>) : (
+                                    <>
+                                        <p className="px-3 py-0 w-full text-left opacity-75" title={new Date(imageStats?.uploadedAt ?? "0").toLocaleString()}>{new Date(imageStats?.uploadedAt ?? "0").toDateString()}</p>
+                                        <div className="flex flex-col sm:flex-row justify-between items-stretch">
+                                            <div className="grid grid-rows-2 text-left h-24 p-4 text-nowrap overflow-hidden w-full">
+                                                <h3>Views</h3>
+                                                <h1 className="content-end">{imageStats?.views}</h1>
+                                            </div>
+                                            <div className="grid grid-rows-2 text-left h-24 p-4 text-nowrap overflow-hidden w-full">
+                                                <h3>Size</h3>
+                                                <h1 className="content-end">{imageStats?.size}</h1>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </Card>
                         </div>
                     </div>
