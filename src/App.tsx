@@ -108,7 +108,7 @@ function App(props: { disableCustomTheme?: boolean }) {
       path: "/",
       element: <>
             <Header user={user} loadingUser={loadingUser} logout={logout} />
-            <Auth user={user} authenticating={authenticating || loadingUser} failure={failure} error={error} />
+            <Auth user={user} isDesktop={isDesktop} authenticating={authenticating || loadingUser} failure={failure} error={error} />
             <MainPage user={user} isDesktop={isDesktop} />
           </>,
     },
@@ -116,7 +116,7 @@ function App(props: { disableCustomTheme?: boolean }) {
       path: "/upload",
       element: <>
             <Header user={user} loadingUser={loadingUser} logout={logout} />
-            <Auth user={user} authenticating={authenticating || loadingUser} failure={failure} error={error} />
+            <Auth user={user} isDesktop={isDesktop} authenticating={authenticating || loadingUser} failure={failure} error={error} />
             <UploadPage user={user} />
           </>,
     },
@@ -124,7 +124,7 @@ function App(props: { disableCustomTheme?: boolean }) {
       path: "/gallery",
       element: <>
             <Header user={user} loadingUser={loadingUser} logout={logout} />
-            <Auth user={user} authenticating={authenticating || loadingUser} failure={failure} error={error} />
+            <Auth user={user} isDesktop={isDesktop} authenticating={authenticating || loadingUser} failure={failure} error={error} />
             <GalleryPage user={user} />
           </>,
     },
@@ -132,7 +132,7 @@ function App(props: { disableCustomTheme?: boolean }) {
       path: "/settings",
       element: <>
             <Header user={user} loadingUser={loadingUser} logout={logout} />
-            <Auth user={user} authenticating={authenticating || loadingUser} failure={failure} error={error} />
+            <Auth user={user} isDesktop={isDesktop} authenticating={authenticating || loadingUser} failure={failure} error={error} />
             <Settings user={user} />
           </>,
     },

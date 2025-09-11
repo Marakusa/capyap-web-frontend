@@ -193,7 +193,28 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
                     </div>
                 </>
             ) : (
-                <></>
+                <>
+                    {!isDesktop && (
+                        <div className="flex justify-center items-center min-h-[60vh]">
+                            <Card className="w-9/10 max-w-120 min-h-50 flex flex-col justify-center items-center">
+                                <h1 className="text-2xl font-bold">Download CapYap</h1>
+                                {downloadLoading ? (
+                                    <Button variant="contained" color="primary" className="mb-4" startIcon={<LoadingDots size="xs" />}>
+                                        Please wait...
+                                    </Button>
+                                ) : (
+                                    <Button variant="contained" color="primary" onClick={downloadInstaller} className="mb-4" startIcon={<Download />}>
+                                        Download Now
+                                    </Button>
+                                )}
+                                {downloadError && (<p className="text-red-400">{downloadError}</p>)}
+                                <p className="text-gray-600">
+                                    Thank you for using CapYap! Click the button above to download the latest version of the app.
+                                </p>
+                            </Card>
+                        </div>
+                    )}
+                </>
             )}
         </>
     );

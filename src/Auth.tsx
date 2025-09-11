@@ -5,10 +5,10 @@ import Button from '@mui/material/Button';
 import { FaDiscord } from "react-icons/fa";
 import Card from '@mui/material/Card';
 
-function Auth({ user, authenticating, failure, error }: {user: Models.User | undefined | null, authenticating: boolean, failure: string | null, error: string | null}) {
+function Auth({ user, isDesktop, authenticating, failure, error }: {user: Models.User | undefined | null, isDesktop: boolean, authenticating: boolean, failure: string | null, error: string | null}) {
   return (
     <>
-      {!user && (
+      {!user || !isDesktop && (
         authenticating ? (
           <div className="flex justify-center items-center min-h-[70vh]">
             <Card className="w-9/10 max-w-120 min-h-50 flex flex-col justify-center items-center p-6">
