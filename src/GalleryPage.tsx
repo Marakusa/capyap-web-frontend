@@ -307,7 +307,7 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
                 <>
                     {error && (<p className="text-red-400">{error}</p>)}
                     <div id="view-bg" className="backdrop-blur-3xl fixed top-0 left-0 w-full h-full flex flex-col gap-4 p-8 justify-center items-center overflow-y-scroll md:overflow-y-hidden">
-                        <div className="flex flex-col lg:flex-row gap-8 lg:h-fit lg:w-fit items-center justify-center">
+                        <div className="flex flex-col lg:flex-row gap-8 h-full w-full items-center justify-center">
                             <div className="flex-0 absolute w-full h-full z-9" onClick={() => closeView()}></div>
                             <div className="flex flex-col gap-4 justify-center items-center h-1/2 lg:h-full z-10">
                                 <img src={capView + "&noView=1"} className="max-h-[90%] max-w-[90%] object-contain" />
@@ -354,7 +354,7 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
                                             </div>
                                             <div className="grid grid-rows-2 text-left h-24 p-4 text-nowrap overflow-hidden w-full">
                                                 <h3>Size</h3>
-                                                <h1 className="content-end">{imageStats?.size}</h1>
+                                                <h1 className="content-end">{imageStats?.size.toUpperCase()}</h1>
                                             </div>
                                         </div>
                                     </>
