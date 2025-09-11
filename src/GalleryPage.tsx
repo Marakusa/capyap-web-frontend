@@ -282,8 +282,6 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
                 console.error(errorMessage);
                 throw new Error(errorMessage);
             }
-            
-            socket.send('updateUser', { userId: user.$id });
         }, {
             pending: "Setting avatar",
             success: "Avatar successfully set",
