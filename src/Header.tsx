@@ -2,8 +2,8 @@ import { loginWithDiscord } from "./auth";
 import type { Models } from "appwrite";
 import LoadingDots from "./LoadingDots";
 import Button from '@mui/material/Button';
-import { Image, Login, Person } from "@mui/icons-material";
-import { Menu, MenuItem } from "@mui/material";
+import { Image, Login } from "@mui/icons-material";
+import { Avatar, Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router";
 
@@ -31,16 +31,15 @@ function Header({user, loadingUser, logout}: {user: Models.User | undefined | nu
                     Gallery
                     </Button>
                     <div>
-                        <Button
-                            variant="outlined" color="secondary" startIcon={<Person />} 
+                        <Avatar 
                             id="demo-positioned-button"
                             aria-controls={open ? 'demo-positioned-menu' : undefined}
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
+                            className="cursor-pointer"
                             onClick={handleClick}
-                        >
-                            {user.name}
-                        </Button>
+                            src={user?.prefs["photoURL"] || undefined}
+                        />
                         <Menu
                             id="demo-positioned-menu"
                             aria-labelledby="demo-positioned-button"

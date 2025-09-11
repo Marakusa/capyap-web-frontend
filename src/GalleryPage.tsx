@@ -7,7 +7,7 @@ import { createJWT } from "./auth";
 import LoadingDots from "./LoadingDots";
 import Button from "@mui/material/Button";
 import copy from "copy-to-clipboard";
-import { Close, Delete, Download, Share, Warning } from "@mui/icons-material";
+import { Close, Delete, Download, Person, Share, Warning } from "@mui/icons-material";
 import CapYapToastContainer, { linkCopiedToast } from "./Toasts";
 import { toast } from "react-toastify";
 import { socket } from "./socket.ts";
@@ -251,6 +251,46 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
         setImageStats(data);
     }
 
+    async function setAsAvatar(file: string) {
+        if (!user) {
+            return;
+        }
+
+        await toast.promise(async () => {
+            const formData = new FormData();
+
+            const sessionJwt = await createJWT();
+
+            if (sessionJwt) {
+                formData.append("sessionKey", sessionJwt);
+            }
+
+            let parsedFilename = file || "";
+            if (file && !file.endsWith("&noView=1")) {
+                parsedFilename = parsedFilename + "&noView=1";
+            }
+            formData.append("file", parsedFilename);
+
+            const avatarSetUrl = config.backend.url + "/user/setAvatar";
+            const response = await fetch(avatarSetUrl, {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                console.error(errorMessage);
+                throw new Error(errorMessage);
+            }
+            
+            socket.send('updateUser', { userId: user.$id });
+        }, {
+            pending: "Setting avatar",
+            success: "Avatar successfully set",
+            error: "Setting avatar failed"
+        });
+    }
+
     const PrevButton = () => { return (<Button variant="outlined" color="primary" onClick={() => { setPage(currentPage - 1); }}>&lt;</Button>); }
     const NextButton = () => { return (<Button variant="outlined" color="primary" onClick={() => { setPage(currentPage + 1); }}>&gt;</Button>); }
     const MiddleDots = () => { return (<p className="mt-4 mx-2">...</p>); }
@@ -357,6 +397,9 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
                                                 <h1 className="content-end">{imageStats?.size.toUpperCase()}</h1>
                                             </div>
                                         </div>
+                                        <Button variant="contained" color="primary" onClick={async () => await setAsAvatar(capView)} startIcon={<Person />}>
+                                            Set as Avatar
+                                        </Button>
                                     </>
                                 )}
                             </Card>

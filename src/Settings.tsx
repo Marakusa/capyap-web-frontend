@@ -1,16 +1,18 @@
 import Card from "@mui/material/Card";
 import type { Models } from "appwrite";
 import CapYapToastContainer from "./Toasts";
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputAdornment, OutlinedInput } from "@mui/material";
-import { Cancel, Delete } from "@mui/icons-material";
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Input, InputAdornment, OutlinedInput } from "@mui/material";
+import { Image, Cancel, Delete } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import config from './local.config.json';
 import { createJWT, fetchUploadKey } from "./auth";
 import { toast } from "react-toastify";
 import { FaCopy } from "react-icons/fa";
 import copy from "copy-to-clipboard";
+import { useNavigate } from "react-router";
 
 function Settings({ user }: { user: Models.User | undefined | null }) {
+    let navigate = useNavigate();
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [uploadKey, setUploadKey] = useState<string | null>(null);
@@ -74,6 +76,12 @@ function Settings({ user }: { user: Models.User | undefined | null }) {
                 <div className="flex justify-center items-center min-h-[70vh]">
                     <Card className="w-9/10 max-w-200 min-h-70 flex flex-col justify-center items-center">
                         <h1 className="text-2xl font-bold">Settings</h1>
+                        <div className="flex flex-col justify-center items-center mb-4 gap-4">
+                            <Avatar sx={{width: "128px", height: "128px"}} src={user?.prefs["photoURL"] || undefined} />
+                            <Button variant="contained" color="primary" startIcon={<Image />} onClick={() => navigate("/gallery")}>
+                                Choose from Gallery
+                            </Button>
+                        </div>
                         <div className="settingsItem disabled">
                             <p>Username:</p>
                             <OutlinedInput id="outlined-basic" disabled value={user.name} />

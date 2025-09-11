@@ -60,6 +60,13 @@ function App(props: { disableCustomTheme?: boolean }) {
   useEffect(() => {
     checkUser();
   }, []);
+
+  socket.on('updateUser-server', () => {
+    console.log("Received updateUser event from socket");
+    checkUser().catch((error) => {
+      console.error("Failed to fetch user after socket update:", error);
+    });
+  });
   
   const logout = async () => {
       await logoutUser();
