@@ -1,7 +1,7 @@
 import Card from "@mui/material/Card";
 import type { Models } from "appwrite";
 import CapYapToastContainer from "./Toasts";
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Input, InputAdornment, OutlinedInput } from "@mui/material";
+import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, InputAdornment, OutlinedInput } from "@mui/material";
 import { Image, Cancel, Delete } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import config from './local.config.json';
