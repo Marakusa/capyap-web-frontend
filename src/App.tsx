@@ -61,12 +61,20 @@ function App(props: { disableCustomTheme?: boolean }) {
     checkUser();
   }, []);
 
-  socket.on('updateUser-server', () => {
-    console.log("Received updateUser event from socket");
-    checkUser().catch((error) => {
-      console.error("Failed to fetch user after socket update:", error);
-    });
-  });
+  useEffect(() => {
+    async function onUserUpdated() {
+      console.log("Received updateUser event from socket");
+      checkUser().catch((error) => {
+        console.error("Failed to fetch user after socket update:", error);
+      });
+    }
+
+    socket.on('updateUser-server', onUserUpdated);
+
+    return () => {
+      socket.off('updateUser-server', onUserUpdated);
+    };
+  }, [checkUser]);
   
   const logout = async () => {
       await logoutUser();
