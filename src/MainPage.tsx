@@ -6,6 +6,10 @@ import { useEffect, useState } from "react";
 import { createJWT } from "./auth";
 import config from './local.config.json';
 import LoadingDots from "./LoadingDots";
+import type { Gallery } from "./gallery";
+import { socket } from "./socket.ts";
+import { GiEmptyWoodBucket } from "react-icons/gi";
+import CapView from "./CapView.tsx";
 
 interface Stats {
     spaceUsed: string,
@@ -15,6 +19,7 @@ interface Stats {
 }
 
 function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, isDesktop: boolean }) {
+    const [capView, setCapView] = useState<string | null>(null);
     const [totalViews, setTotalViews] = useState<number>(0);
     const [files7Days, setFiles7Days] = useState<number>(0);
     const [totalSpaceUsed, setTotalSpaceUsed] = useState<string>("0 KB");
@@ -22,7 +27,64 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
     const [fetching, setFetching] = useState<boolean>(false);
     const [downloadLoading, setDownloadLoading] = useState<boolean>(false);
     const [downloadError, setDownloadError] = useState<string | null>(null);
+    const [gallery, setGallery] = useState<Gallery | null>(null);
+    const [galleryPictures, setGalleryPictures] = useState<string[]>([]);
+    const [galleryError, setGalleryError] = useState<string | null>(null);
+    const [galleryFetching, setGalleryFetching] = useState<boolean>(false);
+    const [galleryFetched, setGalleryFetched] = useState<boolean>(false);
     //const [error, setError] = useState<string | null>(null);
+
+    const readGallery = async () => {
+        if (galleryFetching) {
+            return;
+        }
+
+        setGalleryFetching(true);
+        const formData = new FormData();
+        const sessionJwt = await createJWT();
+        if (sessionJwt) {
+            formData.append("sessionKey", sessionJwt);
+        }
+
+        const galleryReadUrl = config.backend.url + "/f/fetchGallery?limit=3";
+        const response = await fetch(galleryReadUrl, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            console.error(errorMessage);
+            setGalleryError(errorMessage);
+            setGalleryFetching(false);
+            return;
+        }
+        const data = await response.json() as Gallery;
+
+        if (data?.documents && data.documents.length > 0) {
+            setGallery(data);
+            setGalleryPictures(data.documents);
+        }
+
+        setGalleryFetching(false);
+    };
+    
+    if (user && gallery == null && !galleryFetching && !galleryFetched) {
+        setGalleryFetched(true);
+        readGallery();
+    }
+
+    useEffect(() => {
+        async function onAddImageEvent() {
+            await readGallery();
+        }
+
+        socket.on('addImage', onAddImageEvent);
+
+        return () => {
+            socket.off('addImage', onAddImageEvent);
+        };
+    }, [readGallery]);
 
     async function fetchStats() {
         if (fetching) {
@@ -110,10 +172,10 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
     return (
         <>
             {user ? (
-                <>
-                    {!isDesktop ? (
-                        <div className="flex justify-center items-center min-h-[60vh]">
-                            <Card className="w-9/10 max-w-120 min-h-50 flex flex-col justify-center items-center">
+                <div className="flex flex-col gap-4">
+                    <div className="flex flex-row gap-4">
+                        {!isDesktop ? (
+                            <Card className="w-9/10 max-w-100 min-h-50 flex flex-col justify-center items-center">
                                 <h1 className="text-2xl font-bold">Download CapYap</h1>
                                 {downloadLoading ? (
                                     <Button variant="contained" color="primary" className="mb-4" startIcon={<LoadingDots size="xs" />}>
@@ -129,10 +191,8 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
                                     Thank you for using CapYap! Click the button above to download the latest version of the app.
                                 </p>
                             </Card>
-                        </div>
-                    ) : (
-                        <div className="flex justify-center items-center min-h-[70vh]">
-                            <Card className="w-9/10 max-w-120 min-h-50 flex flex-col justify-center items-center">
+                        ) : (
+                            <Card className="w-9/10 max-w-100 min-h-50 flex flex-col justify-center items-center">
                                 <h1 className="text-2xl font-bold">Now press</h1>
                                 <div className="shortcut">
                                     <div>
@@ -147,8 +207,33 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
                                     To take a screenshot. It will be uploaded to your gallery, and a link will be copied to your clipboard.
                                 </p>
                             </Card>
-                        </div>
-                    )}
+                        )}
+                        <Card className="w-full min-h-50 flex flex-col justify-center items-center">
+                            <h1 className="text-2xl font-bold">Recent files</h1>
+                            <div>
+                                {fetching && gallery == null ? (<>
+                                    <LoadingDots size="sm" className="text-gray-500" />
+                                </>) : (<>
+                                    {!gallery?.documents || gallery.documents.length <= 0 ? (
+                                        <div className="flex flex-col justify-center items-center">
+                                            <GiEmptyWoodBucket className="opacity-50 m-2" style={{width: 96, height: 96}} />
+                                            <p className="opacity-50">Start taking or uploading screenshots and they will appear here!</p>
+                                            {galleryError && (<p className="text-red-400">{galleryError}</p>)}
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-wrap justify-center gap-4">
+                                            {galleryPictures.map((source) => <div 
+                                                style={{backgroundImage: `url(${source + "&noView=1"})`}} 
+                                                className="bg-cover bg-center rounded-lg cursor-pointer hover:scale-102 transition-transform w-48 h-48"
+                                                onClick={async () => {
+                                                    setCapView(source);
+                                                }}></div>)}
+                                        </div>
+                                    )}
+                                </>)}
+                            </div>
+                        </Card>
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:flex-row gap-4 justify-center">
                         <Card className="flex-1 text-left">
                             <div className="grid grid-rows-2 text-left p-4 h-full justify-between text-nowrap overflow-hidden">
@@ -191,7 +276,7 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
                             </div>
                         </Card>
                     </div>
-                </>
+                </div>
             ) : (
                 <>
                     {!isDesktop && (
@@ -215,6 +300,9 @@ function MainPage({ user, isDesktop }: { user: Models.User | undefined | null, i
                         </div>
                     )}
                 </>
+            )}
+            {capView && (
+                <CapView capView={capView} setCapView={setCapView} gallery={gallery} setGallery={setGallery} setGalleryPictures={setGalleryPictures} user={user} />
             )}
         </>
     );

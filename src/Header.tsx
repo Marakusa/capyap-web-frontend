@@ -2,14 +2,14 @@ import { loginWithDiscord } from "./auth";
 import type { Models } from "appwrite";
 import LoadingDots from "./LoadingDots";
 import Button from '@mui/material/Button';
-import { Image, Login } from "@mui/icons-material";
+import { Download, Image, Login } from "@mui/icons-material";
 import { Avatar, Menu, MenuItem } from "@mui/material";
-import React from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 
 function Header({user, loadingUser, logout}: {user: Models.User | undefined | null, loadingUser: boolean, logout: () => void}) {
     let navigate = useNavigate();
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -17,6 +17,45 @@ function Header({user, loadingUser, logout}: {user: Models.User | undefined | nu
     const handleClose = () => {
         setAnchorEl(null);
     };
+    
+    const [downloadLoading, setDownloadLoading] = useState<boolean>(false);
+    const [downloadError, setDownloadError] = useState<string | null>(null);
+
+    function downloadInstaller() {
+        setDownloadLoading(true);
+        setDownloadError(null);
+        try {
+            fetch("https://api.github.com/repos/Marakusa/capyap/releases/latest").then((res) => {
+                res.json().then((data) => {
+                    if (res.status > 299) {
+                        console.error(data.message);
+                        setDownloadLoading(false);
+                        setDownloadError(data.message);
+                        return;
+                    }
+
+                    let downloadUrl: string | null = null;
+                    if (data.assets.length > 0) {
+                        downloadUrl = data.assets[0].browser_download_url;
+                    }
+                    if (downloadUrl === null) {
+                        setDownloadLoading(false);
+                        return;
+                    }
+                    setDownloadLoading(false);
+                    window.location.href = downloadUrl;
+                });
+            }).catch((error) => {
+                console.error(error);
+                setDownloadLoading(false);
+                setDownloadError(error);
+            });
+        } catch (ex) {
+            console.error(ex);
+            setDownloadLoading(false);
+            setDownloadError("Download failed, please try again.");
+        }
+    }
 
     return (
         <header className="App-header flex flex-row justify-center items-center gap-6">
@@ -27,6 +66,16 @@ function Header({user, loadingUser, logout}: {user: Models.User | undefined | nu
                     <LoadingDots size="sm" className="text-gray-500" />
                 ) : (user ? (
                 <>
+                    {downloadLoading ? (
+                        <Button variant="contained" color="primary" className="mb-4" startIcon={<LoadingDots size="xs" />}>
+                            Please wait...
+                        </Button>
+                    ) : (
+                        <Button variant="outlined" color="secondary" onClick={downloadInstaller} className="mb-4" startIcon={<Download />}>
+                            Download
+                        </Button>
+                    )}
+                    {downloadError && (<p className="text-red-400">Error, try again</p>)}
                     <Button variant="contained" color="primary" onClick={() => navigate("/gallery")} startIcon={<Image />}>
                     Gallery
                     </Button>
