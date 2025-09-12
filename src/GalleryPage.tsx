@@ -87,25 +87,58 @@ function GalleryPage({ user }: { user: Models.User | undefined | null }) {
         let output = [];
         let totalPages: number = maxPages;
 
+        let pagesShown = 6; // Number of page buttons to show around the current page
+
         for (let i = 1; i <= totalPages; i++) {
-            if (i <= currentPage - 2) {
-                if (i == 2 && i <= totalPages - 8) {
-                    output.push(<PageButton page={1} />);
-                    output.push(<MiddleDots />);
-                }
-                else if (i > totalPages - 8) {
+            // If there are fewer pages, show all page buttons
+            if (totalPages <= pagesShown) {
+                output.push(<PageButton page={i} />);
+                continue;
+            }
+
+            // If the current page is 1, show the first 8 pages and the last page
+            if (currentPage <= 4) {
+                if (i <= pagesShown) {
                     output.push(<PageButton page={i} />);
                 }
-            }
-            if (i > currentPage - 2 && i < currentPage + 7) {
-                output.push(<PageButton page={i} />);
-            }
-            if (i == currentPage + 7) {
-                if (i !== totalPages) {
+                if (i == pagesShown + 1) {
                     output.push(<MiddleDots />);
                 }
-                output.push(<PageButton page={totalPages} />);
-                break;
+                if (i == totalPages) {
+                    output.push(<PageButton page={totalPages} />);
+                }
+                continue;
+            }
+
+            // If the current page is in the middle, show the first page, 3 pages before and after the current page, and the last page
+            if (currentPage > 4 && currentPage < totalPages - 3) {
+                if (i == 1) {
+                    output.push(<PageButton page={1} />);
+                    output.push(<MiddleDots />);
+                    continue;
+                }
+                if (i > currentPage - 3 && i < currentPage + 3) {
+                    output.push(<PageButton page={i} />);
+                    continue;
+                }
+                if (i == totalPages) {
+                    output.push(<MiddleDots />);
+                    output.push(<PageButton page={totalPages} />);
+                    continue;
+                }
+            }
+
+            // If the current page is near the end, show the first page and the previous pages
+            if (currentPage >= totalPages - 3) {
+                if (i == 1) {
+                    output.push(<PageButton page={1} />);
+                    output.push(<MiddleDots />);
+                    continue;
+                }
+                if (i >= totalPages - pagesShown + 1) {
+                    output.push(<PageButton page={i} />);
+                    continue;
+                }
             }
         }
 
