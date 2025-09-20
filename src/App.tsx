@@ -14,6 +14,11 @@ import UploadPage from "./UploadPage.tsx";
 import GalleryPage from "./GalleryPage.tsx";
 import Settings from "./Settings.tsx";
 import { socket } from "./socket.ts";
+import Footer from "./components/Footer.tsx";
+import PrivacyPolicy from "./PrivacyPolicy.tsx";
+import DocsContainer from "./DocsContainer.tsx";
+import TermsOfService from "./TermsOfService.tsx";
+import DocsPage from "./DocsPage.tsx";
 
 function App(props: { disableCustomTheme?: boolean }) {
   const [user, setUser] = useState<Models.User | undefined | null>(null);
@@ -136,6 +141,19 @@ function App(props: { disableCustomTheme?: boolean }) {
             <Settings user={user} />
           </>,
     },
+    {
+      path: "/docs/*",
+      element: <>
+            <Header user={user} loadingUser={loadingUser} logout={logout} />
+            <Auth user={user} isDesktop={isDesktop} authenticating={authenticating || loadingUser} failure={failure} error={error} />
+            <DocsContainer />
+          </>,
+      children: [
+        { path: "privacy", element: <PrivacyPolicy /> },
+        { path: "terms", element: <TermsOfService /> },
+        { path: "*", element: <DocsPage /> },
+      ],
+    },
   ]);
 
   return (
@@ -149,6 +167,7 @@ function App(props: { disableCustomTheme?: boolean }) {
         <div className="App">
           <RouterProvider router={router} />
         </div>
+        <Footer />
       </Container>
     </AppTheme>
   );

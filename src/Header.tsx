@@ -2,7 +2,7 @@ import { loginWithDiscord } from "./auth";
 import type { Models } from "appwrite";
 import LoadingDots from "./LoadingDots";
 import Button from '@mui/material/Button';
-import { Download, Image, Login } from "@mui/icons-material";
+import { Download, Login } from "@mui/icons-material";
 import { Avatar, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router";
@@ -58,27 +58,33 @@ function Header({user, loadingUser, logout}: {user: Models.User | undefined | nu
     }
 
     return (
-        <header className="App-header flex flex-row justify-center items-center gap-6">
+        <header className="App-header flex flex-row justify-between items-center gap-6 w-full px-16">
             <h1 className="select-none cursor-pointer" onClick={() => navigate("/")}>CapYap</h1>
-            <div className="w-9/10 max-w-128 h-24 flex flex-row justify-end items-center gap-6">
+            <div className="w-full h-24 flex flex-row justify-end items-center gap-6">
+                <Button variant="text" color="primary" onClick={() => navigate("/docs")}>
+                    Docs
+                </Button>
                 {loadingUser ?
                 (
                     <LoadingDots size="sm" className="text-gray-500" />
                 ) : (user ? (
                 <>
+                    <Button variant="text" color="primary" onClick={() => navigate("/gallery")}>
+                        Gallery
+                    </Button>
+                    <Button variant="text" color="primary" onClick={() => navigate("/upload")}>
+                        Upload
+                    </Button>
                     {downloadLoading ? (
                         <Button variant="contained" color="primary" className="mb-4" startIcon={<LoadingDots size="xs" />}>
                             Please wait...
                         </Button>
                     ) : (
-                        <Button variant="outlined" color="secondary" onClick={downloadInstaller} className="mb-4" startIcon={<Download />}>
+                        <Button variant="contained" color="primary" onClick={downloadInstaller} className="mb-4" startIcon={<Download />}>
                             Download
                         </Button>
                     )}
                     {downloadError && (<p className="text-red-400">Error, try again</p>)}
-                    <Button variant="contained" color="primary" onClick={() => navigate("/gallery")} startIcon={<Image />}>
-                    Gallery
-                    </Button>
                     <div>
                         <Avatar 
                             id="demo-positioned-button"
@@ -109,8 +115,11 @@ function Header({user, loadingUser, logout}: {user: Models.User | undefined | nu
                                 <p className="opacity-50">{user.email}</p>
                             </div>
                             <hr className="my-2 w-full border-t-0 border-b-1 border-gray-800"></hr>
+                            <MenuItem onClick={() => {navigate("/docs");handleClose();}}>Docs</MenuItem>
+                            <hr className="my-2 w-full border-t-0 border-b-1 border-gray-800"></hr>
                             <MenuItem onClick={() => {navigate("/upload");handleClose();}}>Upload</MenuItem>
                             <MenuItem onClick={() => {navigate("/gallery");handleClose();}}>Gallery</MenuItem>
+                            <hr className="my-2 w-full border-t-0 border-b-1 border-gray-800"></hr>
                             <MenuItem onClick={() => {navigate("/settings");handleClose();}}>Settings</MenuItem>
                             <MenuItem onClick={logout}>Logout</MenuItem>
                         </Menu>
